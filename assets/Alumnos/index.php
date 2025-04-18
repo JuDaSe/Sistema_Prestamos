@@ -1,16 +1,3 @@
-<?php
-if (isset($_GET['accion'])) {
-    if ($_GET['accion'] == 'agregado') {
-        echo "<script>alert('Alumno agregado correctamente.');</script>";
-    } elseif ($_GET['accion'] == 'error') {
-        echo "<script>alert('Hubo un error al agregar el alumno.');</script>";
-    } elseif ($_GET['accion'] == 'eliminado') {
-        echo "<script>alert('Alumno eliminado correctamente.');</script>";
-    }
-}
-?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -54,12 +41,13 @@ if (isset($_GET['accion'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
+                        <?php 
+                        // Cargamos la informacion de la base de datos para que con un ForEach procesar todos los alumnos y mostrarlo en index.php
                         include '../conexion.php';
                         $sql = "SELECT * FROM alumnos";
                         $res = $con->prepare($sql);
                         $res->execute();
-
+                        
                         foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $row): ?>
                             <tr class="info">
                                 <td><?= $row['id_alumno'] ?></td>
@@ -69,7 +57,7 @@ if (isset($_GET['accion'])) {
                                 <td><?= $row['grado'] ?></td>
                                 <td><?= $row['grupo'] ?></td>
                                 <td class="actions">
-                                    <a href="#" class="btn btn-edit" data-id="<?= $row['id_alumno'] ?>">Editar</a>
+                                    <button class="btn btn-edit editarAlumno" data-id="<?= $row['id_alumno'] ?>">Editar</button>
                                     <a href="#" class="btn btn-delete borrarAlumno" data-id="<?= $row['id_alumno'] ?>">Borrar Alumno</a>
 
                                 </td>
@@ -86,7 +74,7 @@ if (isset($_GET['accion'])) {
         </footer>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function() { // Creamos el evento para que cargue despues del HTML y no tener errores en los procesos.
                 const agregarAlumno = document.getElementById('agregarAlumno');
                 if(agregarAlumno){
 
@@ -114,23 +102,23 @@ if (isset($_GET['accion'])) {
                     });
 
                 }
-                    // Eliminar al Alumno ->
+                    // Obtenemos la accion del boton mediante JavaScript y creamos un evento click en la funcion, desde la clase .borrarAlumno
                     const borrarAlumnos = document.querySelectorAll('.borrarAlumno');
                     borrarAlumnos.forEach(function(borrarAlumnobtn) {
                     borrarAlumnobtn.addEventListener('click', function(e) {
                         e.preventDefault();
 
                         const id = this.getAttribute('data-id');
-                        const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este alumno?');
+                        const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este alumno?'); 
 
-                        if (confirmDelete) {
+                        if (confirmDelete) { // Verificamos que el usuario este de acuerdo con la eliminacion del usuario
                             document.getElementById('contenido').style.display = 'none';
 
                             const datos = new URLSearchParams();
                             datos.append('accion', 'eliminar');
                             datos.append('id', id);
 
-                            fetch('procesar.php', {
+                            fetch('procesar.php', { // Procesamo mediante fetch las acciones del usuario y las enviamos a procesar.php para concluir con el siguiente paso mediante PHP
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -142,10 +130,37 @@ if (isset($_GET['accion'])) {
                                 window.location.reload();
                             })
                             .catch(err => console.error('Error al eliminar el alumno:', err));
-                        }
+                             }
+                        });
+                     });
+                     const editarAlumno = document.querySelectorAll('.editarAlumno');
+                     editarAlumno.forEach(function (editarAlumnobtn){
+                        editarAlumnobtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+
+                        document.getElementById('contenido').style.display = 'none';
+                        document.getElementById('agregarAlumno').style.display = 'none'; // Se agrega para ocultar el boton de agregar alumno..., se puede enpaquetar todo en un div y hacerlo desde contenido solo.
+
+                        const id = this.getAttribute('data-id');
+                        const datos = new URLSearchParams();
+                        datos.append('accion', 'editar');
+                        datos.append('id', id);
+
+                        fetch('procesar.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: datos
+                        })
+                        .then(response => response.text())
+                        .then(html => {
+                            document.getElementById('form-container').innerHTML = html;
+                        })
+                        .catch(err => console.error('Error al cargar el formulario:', err));
                     });
                 });
-            });
+            });        
         </script>
     </body>
 </html>

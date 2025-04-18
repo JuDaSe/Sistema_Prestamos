@@ -32,7 +32,7 @@
                     $total = $result->rowCount();
                     
                      ?>
-                            <td><?= $total ?></td>
+                            <td class="number"><?= $total ?></td>
                      <?php
                  ?>
             </div>
