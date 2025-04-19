@@ -96,31 +96,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
                 foreach ($datos as $alumno) {
                         echo '
                                 <form method="POST" action="procesar.php">
-                                    <input type="hidden" name="accion" value="editar">
+                                    <input type="hidden" name="accion" value="editarGuardar">
                 
                                     <div class="form-group">
                                         <label for="matricula">Matrícula:</label>
-                                        <input type="text" name="matricula" value="' . <?= htmlspecialchars($alumno['matricula']) ?> . '" required>
+                                        <input type="text" name="matricula" value=' . $alumno['matricula'] . ' required>
                                     </div>
                 
                                     <div class="form-group">
                                         <label for="nombre">Nombre:</label>
-                                        <input type="text" name="nombre" required>
+                                        <input type="text" name="nombre" value=' . $alumno['nombre'] . ' required>
                                     </div>
                 
                                     <div class="form-group">
                                         <label for="apellido">Apellido:</label>
-                                        <input type="text" name="apellido" required>
+                                        <input type="text" name="apellido" value=' . $alumno['apellido'] . ' required>
                                     </div>
                 
                                     <div class="form-group">
                                         <label for="grado">Grado:</label>
-                                        <input type="text" name="grado" required>
+                                        <input type="text" name="grado" value=' . $alumno['grado'] . ' required>
                                     </div>
                 
                                     <div class="form-group">
                                         <label for="grupo">Grupo:</label>
-                                        <input type="text" name="grupo" required>
+                                        <input type="text" name="grupo" value=' . $alumno['grupo'] . ' required>
                                     </div>
                 
                                     <div class="form-group">
@@ -141,6 +141,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
     }
  
     }    
+}
+
+if($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['accion']) && $_POST['accion'] === 'editarGuardar'){
+    $matricula = $_POST['matricula'];
+    $nombre = $_POST['nombre'];
+    $apellido = $_POST['apellido'];
+    $grado = $_POST['grado'];
+    $grupo = $_POST['grupo'];
+
+    $sql = "UPDATE INTO alumnos (matricula, nombre, apellido, grado, grupo) VALUES (?,?,?,?,?)";
+    $str = $con->prepare($sql);
+    $res = $str->execute([$matricula,$nombre,$apellido,$grupo,$grado]);
+    if($res){
+        header('Location: index.php');
+    } else {
+        header('Location: index.php');
+        exit;
+    }
 }
 
 
