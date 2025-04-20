@@ -77,7 +77,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['accion']) && $_POST['ac
 
 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id']) ) {
 
     $id = $_POST['id'];
 
@@ -97,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
                         echo '
                                 <form method="POST" action="procesar.php">
                                     <input type="hidden" name="accion" value="editarGuardar">
+                                    <input type="hidden" name="id" value=' . $alumno['id_alumno'] . '>
                 
                                     <div class="form-group">
                                         <label for="matricula">Matrícula:</label>
@@ -143,22 +144,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
     }    
 }
 
-if($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['accion']) && $_POST['accion'] === 'editarGuardar'){
-    $matricula = $_POST['matricula'];
-    $nombre = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $grado = $_POST['grado'];
-    $grupo = $_POST['grupo'];
+if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'editarGuardar'){
 
-    $sql = "UPDATE INTO alumnos (matricula, nombre, apellido, grado, grupo) VALUES (?,?,?,?,?)";
-    $str = $con->prepare($sql);
-    $res = $str->execute([$matricula,$nombre,$apellido,$grupo,$grado]);
-    if($res){
-        header('Location: index.php');
+    if(isset($_POST['id'])){
+        $matricula = $_POST['matricula'];
+        $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
+        $grado = $_POST['grado'];
+        $grupo = $_POST['grupo'];
+        $id = $_POST['id'];
+    
+        echo "<script>console.log('Paso 1 el id es: ', " . $id . ");</script>";
+        $sql = "UPDATE alumnos SET matricula =?, nombre=?, apellido=?, grupo = ?, grado = ? WHERE id_alumno= ?";
+        $str = $con->prepare($sql);
+        $res = $str->execute([$matricula,$nombre,$apellido,$grupo,$grado, $id]);
+        echo "<script>console.log('Paso 2');</script>";
+        if($res){
+            $mensaje = "Usuario creado";
+            header('Location: index.php');
+        } else {
+            $mensaje = "Error al crear este usuario";
+            header('Location: index.php');
+            exit;
+        }
     } else {
-        header('Location: index.php');
-        exit;
+        echo 'ID no reconocido o vacio';
     }
+    
+   
 }
 
 
