@@ -64,7 +64,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['accion']) && $_POST['ac
 
     $sql = "INSERT INTO alumnos (matricula, nombre, apellido, grado, grupo) VALUES (?,?,?,?,?)";
     $str = $con->prepare($sql);
-    $res = $str->execute([$matricula,$nombre,$apellido,$grupo,$grado]);
+    $res = $str->execute([$matricula,$nombre,$apellido,$grado,$grupo]);
     if($res){
         $mensaje = "Usuario creado";
         header('Location: index.php');
@@ -173,6 +173,4 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['a
     
    
 }
-
-
 ?>
