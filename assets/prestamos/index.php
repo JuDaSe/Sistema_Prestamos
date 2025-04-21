@@ -1,9 +1,11 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alumnos - Sistema de Préstamos</title>
+    <title>Equipos - Sistema de Préstamos</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
     <body>
@@ -22,8 +24,8 @@
         </header>
         <main class="container">
         <div class="page-header">
-            <h2>Lista de Alumnos</h2>
-            <button id="agregarAlumno" class="btn agregarAlumno">Agregar Alumno</button>
+            <h2>Lista de Prestamos</h2>
+            <button id="agregarAlumno" class="btn agregarAlumno">Nuevo Prestamo</button>
         </div>
             <div id="form-container"></div>
 
@@ -31,34 +33,61 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Matrícula</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Grado</th>
-                            <th>Grupo</th>
-                            <th>Acciones</th>
+                        <th>ID</th> 
+                        <th>Alumno</th> 
+                        <th>Equipo</th> 
+                        <th>Fecha Prestamo</th> 
+                        <th>Fecha Devolucion</th> 
+                        <th>Estado</th> 
+                        <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php 
                         // Cargamos la informacion de la base de datos para que con un ForEach procesar todos los alumnos y mostrarlo en index.php
                         include '../conexion.php';
-                        $sql = "SELECT * FROM alumnos";
+                      /*  $sql = "
+                            SELECT 
+                                prestamos.id_prestamo,
+                                prestamos.fecha_prestamo,
+                                equipo.codigo,
+                                alumnos.matricula
+                            FROM prestamos
+                            INNER JOIN equipos ON prestamos.id_equipo = equipos.id_equipo
+                            INNER JOIN alumnos ON prestamos.id_alumno = alumnos.id_alumno
+                        "; */
+                        
+                        $sql = "
+                        SELECT 
+                            prestamos.id_prestamos,
+                            prestamos.fecha_prestamo,
+                            prestamos.fecha_devolucion,
+                            prestamos.estado,
+                
+                            alumnos.nombre,
+                            alumnos.apellido,
+                
+                            equipo.marca,
+                            equipo.modelo
+                
+                        FROM prestamos
+                        INNER JOIN alumnos ON prestamos.id_alumno = alumnos.id_alumno
+                        INNER JOIN equipo ON prestamos.id_equipo = equipo.id_equipo ";
                         $res = $con->prepare($sql);
                         $res->execute();
                         
                         foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $row): ?>
                             <tr class="info">
-                                <td><?= $row['id_alumno'] ?></td>
-                                <td><?= $row['matricula'] ?></td>
-                                <td><?= $row['nombre'] ?></td>
-                                <td><?= $row['apellido'] ?></td>
-                                <td><?= $row['grado'] ?></td>
-                                <td><?= $row['grupo'] ?></td>
+                                <td><?= $row['id_prestamos'] ?></td>
+                                <td><?= $row['nombre']  . ' ' . $row['apellido'] ?></td>
+                                <td><?= $row['marca'] . ' ' . $row['modelo']?></td>
+                                <td><?= $row['fecha_prestamo'] ?></td>
+                                <td><?= $row['fecha_devolucion'] ?></td>
+                                <td><?= $row['estado'] ?></td>
                                 <td class="actions">
-                                    <button class="btn btn-edit editarAlumno" data-id="<?= $row['id_alumno'] ?>">Editar</button>
-                                    <a href="#" class="btn btn-delete borrarAlumno" data-id="<?= $row['id_alumno'] ?>">Borrar Alumno</a>
+                                <a href="devolver.html?id=1" class="btn btn-return">Devolver</a> 
+                                    <button class="btn btn-edit editarAlumno" data-id="<?= $row['id_prestamos'] ?>">Editar</button>
+                                    <a href="#" class="btn btn-delete borrarAlumno" data-id="<?= $row['id_prestamos'] ?>">Borrar</a>
 
                                 </td>
                             </tr>
@@ -109,7 +138,7 @@
                         e.preventDefault();
 
                         const id = this.getAttribute('data-id');
-                        const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este alumno?'); 
+                        const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este prestamo?'); 
 
                         if (confirmDelete) { // Verificamos que el usuario este de acuerdo con la eliminacion del usuario
                             document.getElementById('contenido').style.display = 'none';

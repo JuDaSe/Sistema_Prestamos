@@ -1,9 +1,11 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alumnos - Sistema de Préstamos</title>
+    <title>Equipos - Sistema de Préstamos</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
     <body>
@@ -23,7 +25,7 @@
         <main class="container">
         <div class="page-header">
             <h2>Lista de Alumnos</h2>
-            <button id="agregarAlumno" class="btn agregarAlumno">Agregar Alumno</button>
+            <button id="agregarAlumno" class="btn agregarAlumno">Agregar equipo</button>
         </div>
             <div id="form-container"></div>
 
@@ -31,34 +33,34 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Matrícula</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Grado</th>
-                            <th>Grupo</th>
-                            <th>Acciones</th>
+                        <th>ID</th> 
+                        <th>Código</th> 
+                        <th>Tipo</th> 
+                        <th>Marca</th> 
+                        <th>Modelo</th> 
+                        <th>Estado</th> 
+                        <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php 
                         // Cargamos la informacion de la base de datos para que con un ForEach procesar todos los alumnos y mostrarlo en index.php
                         include '../conexion.php';
-                        $sql = "SELECT * FROM alumnos";
+                        $sql = "SELECT * FROM equipo";
                         $res = $con->prepare($sql);
                         $res->execute();
                         
                         foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $row): ?>
                             <tr class="info">
-                                <td><?= $row['id_alumno'] ?></td>
-                                <td><?= $row['matricula'] ?></td>
-                                <td><?= $row['nombre'] ?></td>
-                                <td><?= $row['apellido'] ?></td>
-                                <td><?= $row['grado'] ?></td>
-                                <td><?= $row['grupo'] ?></td>
+                                <td><?= $row['id_equipo'] ?></td>
+                                <td><?= $row['codigo'] ?></td>
+                                <td><?= $row['tipo'] ?></td>
+                                <td><?= $row['marca'] ?></td>
+                                <td><?= $row['modelo'] ?></td>
+                                <td><?= $row['estado'] ?></td>
                                 <td class="actions">
-                                    <button class="btn btn-edit editarAlumno" data-id="<?= $row['id_alumno'] ?>">Editar</button>
-                                    <a href="#" class="btn btn-delete borrarAlumno" data-id="<?= $row['id_alumno'] ?>">Borrar Alumno</a>
+                                    <button class="btn btn-edit editarAlumno" data-id="<?= $row['id_equipo'] ?>">Editar</button>
+                                    <a href="#" class="btn btn-delete borrarAlumno" data-id="<?= $row['id_equipo'] ?>">Borrar</a>
 
                                 </td>
                             </tr>

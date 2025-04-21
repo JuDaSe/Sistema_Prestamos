@@ -14,7 +14,7 @@
             <ul>
             <li><a href="index.php">Inicio</a></li>
             <li><a href="./Alumnos/index.php">Alumnos</a></li>
-            <li><a href="./Equipos/index.php">Equipos</a></li>
+            <li><a href="./equipo/index.php">Equipos</a></li>
             <li><a href="./Prestamos/index.php">Préstamos</a></li>
             </ul>
         </nav>
@@ -38,7 +38,16 @@
             </div>
             <div class="card">
                 <h3>Equipos</h3>
-                <p class="number">0</p>
+                <?php
+
+                $sql = "SELECT * FROM equipo";
+                $result = $con->query($sql);
+                $total = $result->rowCount();
+
+                ?>
+                        <td class="number"><?= $total ?></td>
+                <?php
+                ?>
             </div>
             <div class="card">
                 <h3>Préstamos Activos</h3>
