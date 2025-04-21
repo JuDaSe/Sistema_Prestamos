@@ -25,7 +25,7 @@
         <main class="container">
         <div class="page-header">
             <h2>Lista de Prestamos</h2>
-            <button id="agregarAlumno" class="btn agregarAlumno">Nuevo Prestamo</button>
+            <button id="agregarPrestamo" class="btn agregarPrestamo">Nuevo Prestamo</button>
         </div>
             <div id="form-container"></div>
 
@@ -44,7 +44,7 @@
                     </thead>
                     <tbody>
                         <?php 
-                        // Cargamos la informacion de la base de datos para que con un ForEach procesar todos los alumnos y mostrarlo en index.php
+                        // Cargamos la informacion de la base de datos para que con un foreach procesar todos los prestamos y mostrarlo en index.php
                         include '../conexion.php';
                       /*  $sql = "
                             SELECT 
@@ -87,7 +87,7 @@
                                 <td class="actions">
                                 <a href="devolver.html?id=1" class="btn btn-return">Devolver</a> 
                                     <button class="btn btn-edit editarAlumno" data-id="<?= $row['id_prestamos'] ?>">Editar</button>
-                                    <a href="#" class="btn btn-delete borrarAlumno" data-id="<?= $row['id_prestamos'] ?>">Borrar</a>
+                                    <a href="#" class="btn btn-delete borrarPrestamo" data-id="<?= $row['id_prestamos'] ?>">Borrar</a>
 
                                 </td>
                             </tr>
@@ -103,15 +103,15 @@
         </footer>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() { // Creamos el evento para que cargue despues del HTML y no tener errores en los procesos.
-                const agregarAlumno = document.getElementById('agregarAlumno');
-                if(agregarAlumno){
+            document.addEventListener('DOMContentLoaded', function() {
+                const agregarPrestamo = document.getElementById('agregarPrestamo');
+                if(agregarPrestamo){
 
-                        agregarAlumno.addEventListener('click', function(e) {
+                        agregarPrestamo.addEventListener('click', function(e) {
                         e.preventDefault();
 
                         document.getElementById('contenido').style.display = 'none';
-                        document.getElementById('agregarAlumno').style.display = 'none';
+                        document.getElementById('agregarPrestamo').style.display = 'none';
 
                         const datos = new URLSearchParams();
                         datos.append('accion', 'agregar');
@@ -131,23 +131,22 @@
                     });
 
                 }
-                    // Obtenemos la accion del boton mediante JavaScript y creamos un evento click en la funcion, desde la clase .borrarAlumno
-                    const borrarAlumnos = document.querySelectorAll('.borrarAlumno');
-                    borrarAlumnos.forEach(function(borrarAlumnobtn) {
+                    const borrarPrestamo = document.querySelectorAll('.borrarPrestamo');
+                    borrarPrestamo.forEach(function(borrarAlumnobtn) {
                     borrarAlumnobtn.addEventListener('click', function(e) {
                         e.preventDefault();
 
                         const id = this.getAttribute('data-id');
                         const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este prestamo?'); 
 
-                        if (confirmDelete) { // Verificamos que el usuario este de acuerdo con la eliminacion del usuario
+                        if (confirmDelete) { // Verificamos que el usuario este de acuerdo con la eliminacion del prestamo
                             document.getElementById('contenido').style.display = 'none';
 
                             const datos = new URLSearchParams();
                             datos.append('accion', 'eliminar');
                             datos.append('id', id);
 
-                            fetch('procesar.php', { // Procesamo mediante fetch las acciones del usuario y las enviamos a procesar.php para concluir con el siguiente paso mediante PHP
+                            fetch('procesar.php', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -168,7 +167,7 @@
                         e.preventDefault();
 
                         document.getElementById('contenido').style.display = 'none';
-                        document.getElementById('agregarAlumno').style.display = 'none'; // Se agrega para ocultar el boton de agregar alumno..., se puede enpaquetar todo en un div y hacerlo desde contenido solo.
+                        document.getElementById('agregarPrestamo').style.display = 'none';
 
                         const id = this.getAttribute('data-id');
                         const datos = new URLSearchParams();
