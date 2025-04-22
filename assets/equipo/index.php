@@ -25,7 +25,7 @@
         <main class="container">
         <div class="page-header">
             <h2>Lista de Alumnos</h2>
-            <button id="agregarAlumno" class="btn agregarAlumno">Agregar equipo</button>
+            <button id="agregarEquipo" class="btn agregarEquipo">Agregar equipo</button>
         </div>
             <div id="form-container"></div>
 
@@ -59,8 +59,8 @@
                                 <td><?= $row['modelo'] ?></td>
                                 <td><?= $row['estado'] ?></td>
                                 <td class="actions">
-                                    <button class="btn btn-edit editarAlumno" data-id="<?= $row['id_equipo'] ?>">Editar</button>
-                                    <a href="#" class="btn btn-delete borrarAlumno" data-id="<?= $row['id_equipo'] ?>">Borrar</a>
+                                    <button class="btn btn-edit editarEquipo" data-id="<?= $row['id_equipo'] ?>">Editar</button>
+                                    <a href="#" class="btn btn-delete borrarEquipo" data-id="<?= $row['id_equipo'] ?>">Borrar</a>
 
                                 </td>
                             </tr>
@@ -77,14 +77,14 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() { // Creamos el evento para que cargue despues del HTML y no tener errores en los procesos.
-                const agregarAlumno = document.getElementById('agregarAlumno');
-                if(agregarAlumno){
+                const agregarEquipo = document.getElementById('agregarEquipo');
+                if(agregarEquipo){
 
-                        agregarAlumno.addEventListener('click', function(e) {
+                        agregarEquipo.addEventListener('click', function(e) {
                         e.preventDefault();
 
                         document.getElementById('contenido').style.display = 'none';
-                        document.getElementById('agregarAlumno').style.display = 'none';
+                        document.getElementById('agregarEquipo').style.display = 'none';
 
                         const datos = new URLSearchParams();
                         datos.append('accion', 'agregar');
@@ -104,10 +104,10 @@
                     });
 
                 }
-                    // Obtenemos la accion del boton mediante JavaScript y creamos un evento click en la funcion, desde la clase .borrarAlumno
-                    const borrarAlumnos = document.querySelectorAll('.borrarAlumno');
-                    borrarAlumnos.forEach(function(borrarAlumnobtn) {
-                    borrarAlumnobtn.addEventListener('click', function(e) {
+                    // Obtenemos la accion del boton mediante JavaScript y creamos un evento click en la funcion, desde la clase .borrarEquipo
+                    const borrarEquipo = document.querySelectorAll('.borrarEquipo');
+                    borrarEquipo.forEach(function(borrarEquipobtn) {
+                    borrarEquipobtn.addEventListener('click', function(e) {
                         e.preventDefault();
 
                         const id = this.getAttribute('data-id');
@@ -131,17 +131,17 @@
                             .then(data => {
                                 window.location.reload();
                             })
-                            .catch(err => console.error('Error al eliminar el alumno:', err));
+                            .catch(err => console.error('Error al eliminar el equipo:', err));
                              }
                         });
                      });
-                     const editarAlumno = document.querySelectorAll('.editarAlumno');
-                     editarAlumno.forEach(function (editarAlumnobtn){
+                     const editarEquipo = document.querySelectorAll('.editarEquipo');
+                     editarEquipo.forEach(function (editarAlumnobtn){
                         editarAlumnobtn.addEventListener('click', function(e) {
                         e.preventDefault();
 
                         document.getElementById('contenido').style.display = 'none';
-                        document.getElementById('agregarAlumno').style.display = 'none'; // Se agrega para ocultar el boton de agregar alumno..., se puede enpaquetar todo en un div y hacerlo desde contenido solo.
+                        document.getElementById('agregarEquipo').style.display = 'none';
 
                         const id = this.getAttribute('data-id');
                         const datos = new URLSearchParams();
