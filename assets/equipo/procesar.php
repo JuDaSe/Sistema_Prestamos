@@ -62,18 +62,37 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['accion']) && $_POST['ac
     $modelo = $_POST['modelo'];
     $estado = $_POST['estado'];
 
-    $sql = "INSERT INTO equipo (codigo, tipo, marca, modelo, estado) VALUES (?,?,?,?,?)";
-    $str = $con->prepare($sql);
-    $res = $str->execute([$codigo,$tipo,$marca,$modelo,$estado]);
-    if($res){
-        $mensaje = "Usuario creado";
-        header('Location: index.php');
-    } else {
-        $mensaje = "Error al crear este usuario";
-        header('Location: index.php');
-        exit;
+        if($codigo){
+            $sql = "SELECT COUNT(*) FROM equipo WHERE codigo = :codigo";
+            $stmt = $con->prepare($sql);
+            $stmt->execute([
+            ':codigo' => $codigo
+        ]);
+         $existe = $stmt->fetchColumn();
+
+        if($existe > 0){
+            echo '<script>alert("Este codigo ya registrado en la base de datos");
+            window.location.href = "index.php";
+            </script>';
+            exit;
+        } else {
+            $sql = "INSERT INTO equipo (codigo, tipo, marca, modelo, estado) VALUES (?,?,?,?,?)";
+            $str = $con->prepare($sql);
+            $res = $str->execute([$codigo,$tipo,$marca,$modelo,$estado]);
+            if($res){
+                 echo '<script>alert("Equipo guardado en base de datos!");
+                window.location.href = "index.php";
+                </script>';
+                exit;
+            } else {
+                echo '<script>alert("Este equipo no se pudo crear, intentalo nuevamente o contacta con soporte!");
+                window.location.href = "index.php";
+                </script>';
+                exit;
+            }
+        }
     }
-}
+}    
 
 
 

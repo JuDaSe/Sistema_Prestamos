@@ -56,24 +56,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
 // Verificamos que el usuario haya dado al boton de 'Agregar Alumno' para empezar a guardar el usuario mediante el valor 'guardar'
 if($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['accion']) && $_POST['accion'] === 'guardar'){
-    $matricula = $_POST['matricula'];
-    $nombre = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $grado = $_POST['grado'];
-    $grupo = $_POST['grupo'];
+    $matricula = trim($_POST['matricula']);
+    $nombre = trim($_POST['nombre']);
+    $apellido = trim($_POST['apellido']);
+    $grado = trim($_POST['grado']);
+    $grupo = trim($_POST['grupo']);
 
-    $sql = "INSERT INTO alumnos (matricula, nombre, apellido, grado, grupo) VALUES (?,?,?,?,?)";
-    $str = $con->prepare($sql);
-    $res = $str->execute([$matricula,$nombre,$apellido,$grado,$grupo]);
-    if($res){
-        $mensaje = "Usuario creado";
-        header('Location: index.php');
-    } else {
-        $mensaje = "Error al crear este usuario";
-        header('Location: index.php');
-        exit;
-    }
-}
+                if($nombre && $apellido){
+                    $sql = "SELECT COUNT(*) FROM alumnos 
+                    WHERE
+                     LOWER(nombre) = LOWER(:nombre) 
+                    AND LOWER(apellido) = LOWER(:apellido)";
+                    $stmt = $con->prepare($sql);
+                    $stmt->execute([
+                    ':nombre' => $nombre,
+                    ':apellido' => $apellido
+                ]);
+
+                    $sql = "SELECT COUNT(*) FROM alumnos 
+                    WHERE matricula = :matricula";
+                    $res = $con->prepare($sql);
+                    $res->execute([
+                    ':matricula' => $matricula
+                    ]);
+                    $existeMatricula = $res->fetchColumn();
+                    $existeNombreApellido = $stmt->fetchColumn();
+
+            if($existeNombreApellido > 0){
+                echo '<script>alert("Este alumno ya registrado en la base de datos");
+                window.location.href = "index.php";
+                </script>';
+                exit;
+            } else if($existeMatricula > 0) {
+                echo '<script>alert("Esta Matricula ya registrado en la base de datos");
+                window.location.href = "index.php";
+                </script>';
+                exit;
+            } else {
+                $sql = "INSERT INTO alumnos (matricula, nombre, apellido, grado, grupo) VALUES (?,?,?,?,?)";
+                $str = $con->prepare($sql);
+                $res = $str->execute([$matricula,$nombre,$apellido,$grado,$grupo]);
+                if($res){
+                    header('Location: index.php');
+                    exit;
+                } else {
+                    header('Location: index.php');
+                    exit;
+                }
+            }
+        }
+    }    
 
 
 
@@ -153,24 +185,30 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['a
         $grado = $_POST['grado'];
         $grupo = $_POST['grupo'];
         $id = $_POST['id'];
-    
-        echo "<script>console.log('Paso 1 el id es: ', " . $id . ");</script>";
-        $sql = "UPDATE alumnos SET matricula =?, nombre=?, apellido=?, grupo = ?, grado = ? WHERE id_alumno= ?";
-        $str = $con->prepare($sql);
-        $res = $str->execute([$matricula,$nombre,$apellido,$grupo,$grado, $id]);
-        echo "<script>console.log('Paso 2');</script>";
-        if($res){
-            $mensaje = "Usuario creado";
-            header('Location: index.php');
+
+        $sql = "SELECT * FROM alumnos WHERE matricula = :matricula";
+        $str = $con->query($sql);
+        $str->execute($matricula);
+        $datos = $str->fetchAll(PDO::FETCH_ASSOC);
+
+        if($datos['matricula'] === $matricula){
+            echo '<script>alert("Matricula ya existente en la base de datos");</script>';
         } else {
-            $mensaje = "Error al crear este usuario";
-            header('Location: index.php');
-            exit;
-        }
-    } else {
-        echo 'ID no reconocido o vacio';
-    }
-    
-   
-}
+                    $sql = "UPDATE alumnos SET matricula =?, nombre=?, apellido=?, grupo = ?, grado = ? WHERE id_alumno= ?";
+                    $str = $con->prepare($sql);
+                    $res = $str->execute([$matricula,$nombre,$apellido,$grupo,$grado, $id]);
+                    echo "<script>console.log('Paso 2');</script>";
+                    if($res){
+                        $mensaje = "Usuario creado";
+                        header('Location: index.php');
+                    } else {
+                        $mensaje = "Error al crear este usuario";
+                        header('Location: index.php');
+                        exit;
+                    }
+                }
+            } else {
+                echo 'Usuario inexistente en el sistema';
+            }
+        }   
 ?>

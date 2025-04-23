@@ -90,23 +90,38 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'&& isset($_POST['accion']) && $_POST['ac
     $fechaDevolucion = $_POST['fechaDevolucion'] ?? null;
     $observaciones = $_POST['observaciones'] ?? '';
 
-    $sql = "INSERT INTO prestamos (id_alumno, id_equipo, fecha_Prestamo, fecha_devolucion, estado)
-     VALUES (:id_alumno, :id_equipo, :fecha_Prestamo, :fecha_Devolucion, :observaciones)";
-    $str = $con->prepare($sql);
-    $res = $str->execute([
-        ':id_alumno' => $id_alumno,
-        ':id_equipo' => $id_equipo,
-        ':fecha_Prestamo' => $fechaPrestamo,
-        ':fecha_Devolucion' => $fechaDevolucion,
-        ':observaciones' => $observaciones
-    ]);
-    if($res){
-        $mensaje = "Usuario creado";
-        header('Location: index.php');
+    if($id_alumno){
+        $sql = "SELECT COUNT(*) FROM prestamos WHERE id_alumno = :id_alumno";
+        $res = $con->prepare($sql);
+        $res->execute([':id_alumno' => $id_alumno]);
+    }
+
+    $existe = $res->fetchColumn();
+    if($existe > 0){
+        echo '<script>alert("Este Alumno ya tiene un prestamo");
+            window.location.href = "index.php";
+            </script>';
     } else {
-        $mensaje = "Error al crear este usuario";
-        header('Location: index.php');
-        exit;
+
+        $sql = "INSERT INTO prestamos (id_alumno, id_equipo, fecha_Prestamo, fecha_devolucion, estado)
+        VALUES (:id_alumno, :id_equipo, :fecha_Prestamo, :fecha_Devolucion, :observaciones)";
+       $str = $con->prepare($sql);
+       $res = $str->execute([
+           ':id_alumno' => $id_alumno,
+           ':id_equipo' => $id_equipo,
+           ':fecha_Prestamo' => $fechaPrestamo,
+           ':fecha_Devolucion' => $fechaDevolucion,
+           ':observaciones' => $observaciones
+       ]);
+       if($res){
+           $mensaje = "Usuario creado";
+           header('Location: index.php');
+       } else {
+           $mensaje = "Error al crear este usuario";
+           header('Location: index.php');
+           exit;
+       }
+
     }
 }
 

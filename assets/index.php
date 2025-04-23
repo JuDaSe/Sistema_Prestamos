@@ -32,9 +32,7 @@
                     $total = $result->rowCount();
                     
                      ?>
-                            <td class="number"><?= $total ?></td>
-                     <?php
-                 ?>
+                            <p class="number"><?= $total ?></p>
             </div>
             <div class="card">
                 <h3>Equipos</h3>
@@ -45,13 +43,18 @@
                 $total = $result->rowCount();
 
                 ?>
-                        <td class="number"><?= $total ?></td>
-                <?php
-                ?>
+                        <p class="number"><?= $total ?></p>
             </div>
             <div class="card">
                 <h3>Préstamos Activos</h3>
-                <p class="number">0</p>
+                <?php
+
+                $sql = "SELECT * FROM prestamos";
+                $result = $con->query($sql);
+                $total = $result->rowCount();
+
+                ?>
+                <p class="number"><?= $total ?></p>
             </div>
         </div>
     </main>
